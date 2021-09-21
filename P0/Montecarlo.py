@@ -45,8 +45,6 @@ def compara_tiempos():
     plt.scatter(sizes, times_vec, c='blue', label='array')
     plt.legend()
     plt.savefig('time.png')
-    plt.show()
-    print("sacabo")
 
 
 def funcion(x):
