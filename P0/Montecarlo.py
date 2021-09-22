@@ -15,8 +15,8 @@ def integra_mc(fun, a, b, num_puntos = 10000):
         if (fun(x) < y):
             dentro = dentro + 1
 
-    toc = time.process_time()
     sol = (dentro/num_puntos) * (b-a) * max
+    toc = time.process_time()
     return 1000 * (toc-tic)
 
 def integra_mc_vec(fun, a, b, num_puntos = 10000):
@@ -28,8 +28,8 @@ def integra_mc_vec(fun, a, b, num_puntos = 10000):
     y = fun(x)
     yrand = np.random.uniform(0, max, num_puntos)
     
-    toc = time.process_time()
     sol = (sum(yrand<y)/num_puntos) * (b-a) * max
+    toc = time.process_time()
     return 1000 * (toc-tic)
 
 def compara_tiempos():
