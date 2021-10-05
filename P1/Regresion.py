@@ -1,8 +1,10 @@
 import time
+from matplotlib import colors
 import numpy as np
 import scipy.integrate
 import matplotlib.pyplot as plt
 from pandas.io.parsers import read_csv
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def carga_csv(file_name):
@@ -65,6 +67,15 @@ t1=[-1,4]
 puntito=regresion()
 c = make_data(t0,t1,X,Y)
 
-plt.plot(puntito[0],puntito[1], "x")
-plt.contour(c[0],c[1],c[2], np.logspace(-2, 3, 20), colors='blue') # cmap='rainbow'
-plt.savefig("contorno.png")  
+plt.plot(puntito[0],puntito[1], "x", color='red')
+plt.contour(c[0],c[1],c[2], np.logspace(-2, 3, 20), cmap='rainbow')
+plt.savefig("contorno.png") 
+
+plt.clf()
+
+fig = plt.figure()
+ax = Axes3D(fig)
+
+surf = ax.plot_surface(c[0],c[1],c[2], cmap='rainbow',linewidth=0, antialiased=False)
+
+plt.savefig("superficie.png") 
