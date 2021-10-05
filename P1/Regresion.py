@@ -33,8 +33,12 @@ def regresion():
     plt.plot([min_x, max_x], [min_y, max_y])
     plt.savefig("resultado.pdf")
 
-def coste(X,Y,Theta0, Theta1):
-    return 0
+def coste(X,Y,theta):
+    aux = 0
+    m = len(X)
+    for i in range(m):
+        aux += ((theta[0] + theta[1] * X[i])-Y[i])**2
+    return aux/(2*m)
 
 def make_data(t0_range, t1_range, X, Y):
 
@@ -52,3 +56,11 @@ def make_data(t0_range, t1_range, X, Y):
     plt.savefig("contorno.png")    
 
     return [Theta0, Theta1, Coste]
+
+datos = carga_csv('ex1data1.csv')
+X = datos[:, 0]
+Y = datos[:, 1]
+t0=[-10,10]
+t1=[-1,4]
+
+make_data(t0,t1,X,Y)
