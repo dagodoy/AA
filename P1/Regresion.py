@@ -97,24 +97,32 @@ def graficas1():
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
-def regresion_varias():
+def regresion_varias(alpha):
     datos = carga_csv('ex1data2.csv')
 
     X = datos[:, :-1] 
     Y = datos[:, -1]
 
-    X_norm, x_mu, x_sigma = normalizar_mat(X)
-    Y_norm, y_mu, y_simga = normalizar_mat(Y)
+    X_norm, mu, sigma = normalizar_mat(X)
 
     m = np.shape(X)[0]
     n = np.shape(X)[1]
 
     # añadimos una columna de 1's a la X
-    X_norm = np.hstack([np.ones([m, 1]), X])
+    X_norm = np.hstack([np.ones([m, 1]), X_norm])
 
     theta = np.full(n+1, 0)
-    alpha = 0.01
-    #Thetas, costes = descenso_gradiente(X, Y, alpha)
+    costes = []
+
+    for i in range(1500):
+        theta = gradiente_varias(X_norm, Y, theta, alpha)
+        costes.append(coste(X_norm, Y, theta))
+
+    x1 = (1650-mu[0])/sigma[0]
+    x2 = (3-mu[1])/sigma[1]
+    precio = theta[0] + theta[1]*x1 + theta[2]*x2
+
+    return theta, costes, precio
 
 #-----------------------------------------------------------------------
 
@@ -131,7 +139,45 @@ def normalizar_mat(X):
     X_norm = (X-mu)/sigma
     return X_norm, mu, sigma
 
+#-----------------------------------------------------------------------
+
+def gradiente_varias(X, Y, Theta, alpha):
+    NuevaTheta = Theta
+    m = np.shape(X)[0]
+    n = np.shape(X)[1]
+    H = np.dot(X, Theta)
+    Aux = (H - Y)
+    for i in range(n):
+        Aux_i = Aux * X[:, i]
+        NuevaTheta[i] -= (alpha / m) * Aux_i.sum()
+    return NuevaTheta
+
+#-----------------------------------------------------------------------
+
+def graficas2_1():
+    theta, _, precio = regresion_varias(0.01)
+    print("Precio lineal:", precio)
+    print("theta lineal:", theta)
+    plt.clf()
+
+#-----------------------------------------------------------------------
+
+def graficas2_1_alphas():
+    alphas = [0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1]
+    for i in range(len(alphas)):
+        _, costes,_ = regresion_varias(alphas[i])
+        plt.plot(costes)
+    plt.savefig("resultado2_1.pdf")
+    plt.clf()
+
 #---------------------------------------------------------------------------------------------------------------------------------
 
+
+
+#---------------------------------------------------------------------------------------------------------------------------------
+
+
 #graficas1()
-regresion_varias()
+#graficas2()
+graficas2_1_alphas()
+
