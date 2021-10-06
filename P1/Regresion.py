@@ -172,12 +172,23 @@ def graficas2_1_alphas():
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
+def ecuacion_normal():
+    datos = carga_csv('ex1data2.csv')
 
+    X = datos[:, :-1] 
+    Y = datos[:, -1]
+
+    m = np.shape(X)[0]
+
+    X = np.hstack([np.ones([m, 1]), X])
+
+    theta = np.dot(np.dot(np.linalg.pinv(np.dot(np.transpose(X), X)), np.transpose(X)), Y)
+    print("Precio normal:", theta[0] + theta[1]*1650 + theta[2]*3)
+    print("theta normal:", theta)
 
 #---------------------------------------------------------------------------------------------------------------------------------
 
 
 #graficas1()
-#graficas2()
-graficas2_1_alphas()
-
+graficas2_1()
+ecuacion_normal()
