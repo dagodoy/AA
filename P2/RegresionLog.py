@@ -25,7 +25,7 @@ def regresion_logistica():
 
     pos1 = np.where(Y==0)
     plt.scatter(X[pos1,0], X[pos1,1], marker='o', c='green')
-    plt.savefig("grafica1.pdf")
+    plt.savefig("grafica1.png")
     plt.clf()
 
     m=np.shape(X)[0]
@@ -83,7 +83,7 @@ def pinta_frontera_recta(X, Y, theta):
  # el cuarto parámetro es el valor de z cuya frontera se
  # quiere pintar
     plt.contour(xx1, xx2, h, [0.5], linewidths=1, colors='b')
-    plt.savefig("frontera.pdf")
+    plt.savefig("frontera.png")
     plt.close()
 
 #-----------------------------------------------------------------------
@@ -133,7 +133,7 @@ def plot_decisionboundary(X, Y, theta, poly):
     h = h.reshape(xx1.shape)
  
     plt.contour(xx1, xx2, h, [0.5], linewidths=1, colors='g')
-    plt.savefig("boundary.pdf")
+    plt.savefig("boundary.png")
     plt.close()
 
 #-----------------------------------------------------------------------
@@ -149,7 +149,7 @@ def regresion_logistica_reg():
 
     pos1 = np.where(Y==0)
     plt.scatter(X[pos1,0], X[pos1,1], marker='o', c='green')
-    plt.savefig("grafica2.pdf")
+    plt.savefig("grafica2.png")
     plt.clf()
 
     X = mapfeature(X)
@@ -163,9 +163,9 @@ def regresion_logistica_reg():
     result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X,Y, 1))
     theta_opt = result[0]
 
-    #plot_decisionboundary(X, Y, theta_opt, PolynomialFeatures(6))
+    plot_decisionboundary(X, Y, theta_opt, PolynomialFeatures(6))
 
 #-----------------------------------------------------------------------
-
+regresion_logistica()
 regresion_logistica_reg()
 
