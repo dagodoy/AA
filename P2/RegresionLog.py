@@ -89,7 +89,7 @@ def pinta_frontera_recta(X, Y, theta):
 #-----------------------------------------------------------------------
 
 def evaluacion(theta, X, Y):
-    correctos = np.sum((np.dot(X, theta)>=0.5)==Y)
+    correctos = np.sum((sigmoid(np.dot(X, theta))>=0.5)==Y)
     return correctos
 
 #-----------------------------------------------------------------------
@@ -109,7 +109,7 @@ def coste_reg(theta, X, Y, lambd):
 
 def gradiente_reg(theta, XX, Y, lambd):
     H = sigmoid( np.matmul(XX,theta))
-    grad =(1/len(Y))* np.matmul(XX.T, H - Y) + lambd/(2*len(XX)) * np.sum(theta**2)
+    grad =(1/len(Y))* np.matmul(XX.T, H - Y) + lambd/(len(XX)) * theta
     return grad
 
 #-----------------------------------------------------------------------
@@ -133,7 +133,7 @@ def plot_decisionboundary(X, Y, theta, poly):
     h = h.reshape(xx1.shape)
  
     plt.contour(xx1, xx2, h, [0.5], linewidths=1, colors='g')
-    plt.savefig("boundary.png")
+    plt.savefig("lambda 100.png")
     plt.close()
 
 #-----------------------------------------------------------------------
