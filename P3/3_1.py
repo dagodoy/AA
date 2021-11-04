@@ -60,8 +60,7 @@ def evaluacion(theta_opt, X, y):
 
     chances = np.zeros([np.shape(theta_opt)[0], np.shape(X1s)[0]])
     for i in range(np.shape(theta_opt)[0]):
-        a = sigmoid(np.matmul(X1s,theta_opt[i]))
-        chances[i, :] = a
+        chances[i, :] = sigmoid(np.matmul(X1s,theta_opt[i]))
 
     maxChance = chances.argmax(axis= 0)
     correctos = np.sum(maxChance == (y % 10))
