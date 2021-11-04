@@ -45,6 +45,7 @@ def gradiente_reg(theta, XX, Y, lambd):
 
 def propagacion():
     X, y = load()
+    y = y.ravel()
     theta1, theta2= loadRed()
     m = np.shape(X)[0]
 
@@ -55,45 +56,8 @@ def propagacion():
     a3=sigmoid(z3)
 
     maxChance = a3.argmax(axis= 1)
-    correctos = np.sum(maxChance == (y % 10))
+    correctos = np.sum(maxChance+1 == y)
     return correctos/m * 100
 
-print (propagacion())
-#-----------------------------------------------------------------------
-
-# def oneVsAll(X, y, num_etiquetas, reg):
-#     m = np.shape(X)[0]
-#     X1s = np.hstack([np.ones([m, 1]), X])
-#     theta_opt = np.zeros([num_etiquetas, X1s.shape[1]])
-
-#     for i in range(num_etiquetas):
-#         theta = np.zeros(X1s.shape[1]) 
-#         if (i == 0):
-#             result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X1s,(y == 10) *1, reg))
-#         else:
-#             result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X1s,(y == i) *1, reg))
-#         theta_opt[i] = result[0]
-#     return theta_opt
-
-# #-----------------------------------------------------------------------
-
-# def evaluacion(theta_opt, X, y):
-#     m = np.shape(X)[0]
-#     X1s = np.hstack([np.ones([m, 1]), X])
-
-#     chances = np.zeros([np.shape(theta_opt)[0], np.shape(X1s)[0]])
-#     for i in range(np.shape(theta_opt)[0]):
-#         a = sigmoid(np.matmul(X1s,theta_opt[i]))
-#         chances[i, :] = a
-
-
-    
-# #-----------------------------------------------------------------------
-
-# def regresion_multi():
-#     X, y = load()
-#     y = y[:, 0]
-#     theta_opt = oneVsAll(X, y, 10, 0.1)
-#     print("Correctos: ", evaluacion(theta_opt, X, y))
-
+print ("Correctos: ", propagacion())
 #-----------------------------------------------------------------------

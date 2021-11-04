@@ -71,7 +71,7 @@ def evaluacion(theta_opt, X, y):
 
 def regresion_multi():
     X, y = load()
-    y = y[:, 0]
+    y = y.ravel()
     theta_opt = oneVsAll(X, y, 10, 0.1)
     print("Correctos: ", evaluacion(theta_opt, X, y))
 
