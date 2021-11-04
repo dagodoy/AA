@@ -18,7 +18,7 @@ def load():
 #-----------------------------------------------------------------------
 
 def loadRed():
-    weights = loadmat('ex3dweights.mat')
+    weights = loadmat('ex3weights.mat')
     theta1, theta2 = weights['Theta1'],weights['Theta2']
 
     return theta1, theta2
@@ -49,12 +49,16 @@ def propagacion():
     m = np.shape(X)[0]
 
     a1=np.hstack([np.ones([m, 1]), X])
-    z2=theta1*a1
+    z2=np.dot(a1, theta1.T)
     a2=np.hstack([np.ones([m, 1]), sigmoid(z2)])
-    z3= theta2*a2
+    z3=np.dot(a2, theta2.T)
     a3=sigmoid(z3)
 
+    maxChance = a3.argmax(axis= 1)
+    correctos = np.sum(maxChance == (y % 10))
+    return correctos/m * 100
 
+print (propagacion())
 #-----------------------------------------------------------------------
 
 # def oneVsAll(X, y, num_etiquetas, reg):
@@ -82,9 +86,7 @@ def propagacion():
 #         a = sigmoid(np.matmul(X1s,theta_opt[i]))
 #         chances[i, :] = a
 
-#     maxChance = chances.argmax(axis= 0)
-#     correctos = np.sum(maxChance == (y % 10))
-#     return correctos/m * 100
+
     
 # #-----------------------------------------------------------------------
 
