@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import scipy.optimize as opt
-
+import checkNNGradients
 
 
 #-----------------------------------------------------------------------
@@ -72,10 +72,46 @@ def propagacion(X, Theta1, Theta2):
 
 #-----------------------------------------------------------------------
 
+def backprop ( params_rn , num_entradas , num_ocultas , num_etiquetas , X, y , reg):
+
+    Theta1 = np.reshape ( params_rn [ : num_ocultas * ( num_entradas + 1 ) ] ,( num_ocultas , ( num_entradas + 1 )))
+    Theta2 = np.reshape ( params_rn [ num_ocultas * ( num_entradas + 1 ) : ] ,( num_etiquetas , ( num_ocultas + 1 )))
+
+    A1, A2, H = propagacion(X, Theta1, Theta2)
+    m = X.shape[0]
+
+    Delta1 = np.zeros_like(Theta1)
+    Delta2 = np.zeros_like(Theta2)
+
+    for t in range(m):
+        a1t = A1[t, :] # (401,)
+        a2t = A2[t, :] # (26,)
+        ht = H[t, :] # (10,)
+        yt = y[t] # (10,)
+        d3t = ht - yt # (10,)
+        d2t = np.dot(Theta2.T, d3t) * (a2t * (1 - a2t)) # (26,)
+        Delta1 = Delta1 + np.dot(d2t[1:, np.newaxis], a1t[np.newaxis, :])
+        Delta2 = Delta2 + np.dot(d3t[:, np.newaxis], a2t[np.newaxis, :])
+
+    G1 = Delta1/m
+    G2 = Delta2/m
+
+    return coste_red(np.array([Theta1, Theta2]), X, y), np.concatenate([np.ravel(G1), np.ravel(G2)])
+
+#-----------------------------------------------------------------------
+
 def red_1():
     X, y = load()
     theta1, theta2 = loadRed()
-    print ( coste_red_reg(np.array([theta1, theta2]), X, y, 1) )
+    #print ( coste_red_reg(np.array([theta1, theta2]), X, y, 1) )
+    params_rn = np.concatenate([np.ravel(theta1), np.ravel(theta2)])
+    num_entradas = 400
+    num_ocultas = 25
+    num_etiquetas = 10
+
+    tupla = backprop(params_rn, num_entradas, num_ocultas, num_etiquetas, X, y,0 )
+
+    checkNNGradients.checkNNGradients(backprop, 0)
     
 
 red_1()
