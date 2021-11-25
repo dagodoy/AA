@@ -40,13 +40,13 @@ def sigmoid(z):
 #-----------------------------------------------------------------------
 def coste_red(theta, X, Y):
     _, _, H = propagacion(X,theta[0],theta[1])
-    cost = (-1 / (len(X))) * np.sum((Y * np.log(H)) + (1 - Y) * np.log(1 - H + 1e-6))
+    cost = (-1 / (len(X))) * np.sum((Y * np.log(H)) + (1 - Y) * np.log(1 - H + 1e-9))
     return cost
 
 #-----------------------------------------------------------------------
 
 def coste_red_reg(theta, X, Y, lambd):
-    a = lambd/(2*(len(X))) * (np.sum(theta[0]**2) + np.sum(theta[1]**2))
+    a = lambd/(2*(len(X))) * (np.sum(theta[0][1:]**2) + np.sum(theta[1][1:]**2))
     return coste_red(theta, X, Y) + a
 
 #-----------------------------------------------------------------------
@@ -69,6 +69,14 @@ def propagacion(X, Theta1, Theta2):
     H=sigmoid(z3)
 
     return a1, a2, H
+
+#-----------------------------------------------------------------------
+
+def termino_reg(g, m, reg, theta):
+    columna = g[0]
+    g = g + (reg/m)*theta
+    g[0] = columna
+    return g
 
 #-----------------------------------------------------------------------
 
@@ -96,23 +104,43 @@ def backprop ( params_rn , num_entradas , num_ocultas , num_etiquetas , X, y , r
     G1 = Delta1/m
     G2 = Delta2/m
 
-    return coste_red(np.array([Theta1, Theta2]), X, y), np.concatenate([np.ravel(G1), np.ravel(G2)])
+    G1 = termino_reg(G1, m, reg, Theta1)
+    G2 = termino_reg(G2, m, reg, Theta2)
+
+    return coste_red_reg(np.array([Theta1, Theta2]), X, y, reg), np.concatenate([np.ravel(G1), np.ravel(G2)])        
 
 #-----------------------------------------------------------------------
 
 def red_1():
     X, y = load()
     theta1, theta2 = loadRed()
-    #print ( coste_red_reg(np.array([theta1, theta2]), X, y, 1) )
     params_rn = np.concatenate([np.ravel(theta1), np.ravel(theta2)])
     num_entradas = 400
     num_ocultas = 25
     num_etiquetas = 10
 
-    tupla = backprop(params_rn, num_entradas, num_ocultas, num_etiquetas, X, y,0 )
+    tupla = backprop(params_rn, num_entradas, num_ocultas, num_etiquetas, X, y,1 )
 
-    checkNNGradients.checkNNGradients(backprop, 0)
+    checkNNGradients.checkNNGradients(backprop, 1)
+
+    ini = 0.12
+    reg=1
+    i=70
+
+    pesos= np.random.uniform(-ini,ini,params_rn.shape[0])
+    sol = opt.minimize(fun=backprop, x0=pesos, args=(num_entradas,num_ocultas, num_etiquetas,X, y ,reg), jac= True,method = 'TNC', options ={'maxiter' :i})
+
+    theta1 = np.reshape ( sol.x [ : num_ocultas * ( num_entradas + 1 ) ] ,( num_ocultas , ( num_entradas + 1 )))
+    theta2 = np.reshape ( sol.x [ num_ocultas * ( num_entradas + 1 ) : ] ,( num_etiquetas , ( num_ocultas + 1 )))
+    m = np.shape(X)[0]
+
+    A1, A2, H = propagacion(X, theta1, theta2)
+
+    maxChance = H.argmax(axis= 1)
+    res = y.argmax(axis= 1)
+    correctos = np.sum(maxChance == res)
+    return correctos/m * 100
     
 
-red_1()
+print (red_1())
 #-----------------------------------------------------------------------
