@@ -1,4 +1,6 @@
 
+from math import exp
+from warnings import resetwarnings
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.io import loadmat
@@ -76,25 +78,89 @@ def pintaLineal(X, y):
 
 #-----------------------------------------------------------------------
 
-def pintaError(X, y, Xval, yval):
-
-    errorE, errorV = error(X,y,0,Xval, yval)
-
+def pintaError(errorE, errorV):
 
     plt.plot(np.linspace(1,11,12,dtype=int),errorE, label="Train")
     plt.plot(np.linspace(1,11,12,dtype=int),errorV, label="Cross Validation")
     plt.legend()
     plt.savefig("curvas.png")
     plt.clf()
+#-----------------------------------------------------------------------
+
+def expandir(X, p):
+    r = np.empty([np.shape(X)[0],p])
+    for i in range(p):
+        r[:,i]= (X**(i+1)).ravel()
+    return r
+
+#-----------------------------------------------------------------------
+
+def normalizar_mat(X):
+    mu = np.mean(X, 0)
+    sigma = np.std(X, 0)
+    X_norm = (X-mu)/sigma
+    return X_norm, mu, sigma
+#-----------------------------------------------------------------------
+
+def pintaPolinomial(X,y,res,mu,sigma):
+    plt.plot(X[:,1],y,"x")
+
+    lX = np.arange(np.min(X), np.max(X), 0.05)
+    aux = (expandir(lX,8)-mu)/ sigma
+    lY = np.hstack([np.ones([len(aux),1]),aux]).dot(res)
+    plt.plot(lX,lY,'-')
+
+    plt.savefig("polinomial.png")
+    plt.clf()
+
+#-----------------------------------------------------------------------
+def errorPoli(Xnor, y, Xval, yval):
+    errorE, errorV = error(Xnor,y,0,Xval, yval)
+    pintaErrorPoli(errorE, errorV,'0')
+
+    errorE, errorV = error(Xnor,y,1,Xval, yval)
+    pintaErrorPoli(errorE, errorV,'1')
+
+    errorE, errorV = error(Xnor,y,50,Xval, yval)
+    pintaErrorPoli(errorE, errorV,'50')
+
+    errorE, errorV = error(Xnor,y,100,Xval, yval)
+    pintaErrorPoli(errorE, errorV,'100')
+#-----------------------------------------------------------------------
+
+def pintaErrorPoli(errorE, errorV, i):
+    plt.plot(np.linspace(1,12,12,dtype=int),errorE, label="Train")
+    plt.plot(np.linspace(1,12,12,dtype=int),errorV, label="Cross Validation")
+    plt.legend()
+    plt.savefig("ErrorPoli"+i+".png")
+    plt.clf()
+#-----------------------------------------------------------------------
 
 def main():
-    X, y, Xval, yval, Xtest, ytest = load()
-    m = np.shape(X)[0]
-    X = np.hstack([np.ones([m, 1]), X])
+    Xini, y, Xval, yval, Xtest, ytest = load()
+    m = np.shape(Xini)[0]
+    X = np.hstack([np.ones([m, 1]), Xini])
     y = y.ravel()
 
     pintaLineal(X, y)
-    pintaError(X, y, Xval, yval)
+    errorE, errorV = error(X,y,0,Xval, yval)
+
+    pintaError(errorE, errorV)
+
+
+    Xexp = expandir(Xini,8)
+    Xnor , mu, sigma = normalizar_mat(Xexp)
+    Xnor = np.hstack([np.ones([np.shape(Xnor)[0],1]), Xnor])
+
+    theta = np.zeros(np.shape(Xnor[1]))
+    res = opt.minimize(fun=lineal,x0= theta, args= (Xnor, y, 0), jac = True, method = 'TNC')
+
+    pintaPolinomial(X,y,res.x,mu,sigma)
+
+    XvalExp = expandir(Xval,8)
+    XvalExp = (XvalExp-mu)/sigma
+
+    errorPoli(Xnor, y, XvalExp, yval)
 
 #-----------------------------------------------------------------------
 main()
