@@ -42,7 +42,7 @@ def lineal(Theta, X, Y, lambd):
     
 #-----------------------------------------------------------------------
 
-def error(X,y,reg,Xval, Yval):
+def error_conjuntos(X,y,reg,Xval, Yval):
     m = np.shape(X)[0]
     mV = np.shape(Xval)[0]
     errorV = np.zeros([m])
@@ -55,6 +55,22 @@ def error(X,y,reg,Xval, Yval):
         res = opt.minimize(fun=lineal,x0= theta, args= (X[0:i], y[0:i], reg), jac = True, method = 'TNC')
         errorV[i-1] = coste_lineal(Xval,Yval,res.x,0)
         errorE[i-1] = coste_lineal(X[0:i],y[0:i],res.x,0)
+
+    return errorE, errorV
+
+
+#-----------------------------------------------------------------------
+
+def error_lambda(X,y,reg,Xval, Yval):
+    m = np.shape(X)[0]
+    mV = np.shape(Xval)[0]
+
+    Xval = np.hstack([np.ones([mV, 1]), Xval])
+
+    theta = np.zeros(np.shape(X)[1])
+    res = opt.minimize(fun=lineal,x0= theta, args= (X, y, reg), jac = True, method = 'TNC')
+    errorV = coste_lineal(Xval,Yval,res.x,0)
+    errorE = coste_lineal(X,y,res.x,0)
 
     return errorE, errorV
 
@@ -115,25 +131,58 @@ def pintaPolinomial(X,y,res,mu,sigma):
 
 #-----------------------------------------------------------------------
 def errorPoli(Xnor, y, Xval, yval):
-    errorE, errorV = error(Xnor,y,0,Xval, yval)
+    errorE, errorV = error_conjuntos(Xnor,y,0,Xval, yval)
     pintaErrorPoli(errorE, errorV,'0')
 
-    errorE, errorV = error(Xnor,y,1,Xval, yval)
+    errorE, errorV = error_conjuntos(Xnor,y,1,Xval, yval)
     pintaErrorPoli(errorE, errorV,'1')
 
-    errorE, errorV = error(Xnor,y,50,Xval, yval)
+    errorE, errorV = error_conjuntos(Xnor,y,50,Xval, yval)
     pintaErrorPoli(errorE, errorV,'50')
 
-    errorE, errorV = error(Xnor,y,100,Xval, yval)
+    errorE, errorV = error_conjuntos(Xnor,y,100,Xval, yval)
     pintaErrorPoli(errorE, errorV,'100')
 #-----------------------------------------------------------------------
 
+def errorReg(Xnor, y, Xval, yval):
+    lambdas = np.array([0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10])
+    errorE = np.empty_like(lambdas)
+    errorV = np.empty_like(lambdas)
+    for i in range(len(lambdas)):
+        errorE[i], errorV[i] = error_lambda(Xnor,y,lambdas[i],Xval, yval)
+
+    pintaErrorReg(errorE, errorV,lambdas)
+
+#-----------------------------------------------------------------------
+
 def pintaErrorPoli(errorE, errorV, i):
-    plt.plot(np.linspace(1,12,12,dtype=int),errorE, label="Train")
-    plt.plot(np.linspace(1,12,12,dtype=int),errorV, label="Cross Validation")
+    plt.plot(np.linspace(1,len(errorE),len(errorE),dtype=int),errorE, label="Train")
+    plt.plot(np.linspace(1,len(errorV),len(errorV),dtype=int),errorV, label="Cross Validation")
     plt.legend()
     plt.savefig("ErrorPoli"+i+".png")
     plt.clf()
+#-----------------------------------------------------------------------
+
+def pintaErrorReg(errorE, errorV, lambdas):
+    plt.clf()
+    plt.plot(lambdas,errorE,label="Train")
+    plt.plot(lambdas,errorV,label="Cross Validation")
+    plt.legend()
+    plt.savefig("ErrorLambdas")
+
+#-----------------------------------------------------------------------
+
+def tercerConjunto(X, y, Xtest, ytest, mu, sigma):
+    theta = np.zeros(np.shape(X[1]))
+    res = opt.minimize(lineal, theta, args = (X, y, 3), jac = True, method = 'TNC')
+
+    XtestExp = expandir(Xtest,8)
+    XtestExp = (XtestExp-mu)/sigma
+    XtestExp = np.hstack([np.ones([np.shape(XtestExp)[0],1]), XtestExp])
+
+    error = coste_lineal(XtestExp,ytest,res.x,0)
+    print(error)
+
 #-----------------------------------------------------------------------
 
 def main():
@@ -143,7 +192,7 @@ def main():
     y = y.ravel()
 
     pintaLineal(X, y)
-    errorE, errorV = error(X,y,0,Xval, yval)
+    errorE, errorV = error_conjuntos(X,y,0,Xval, yval)
 
     pintaError(errorE, errorV)
 
@@ -161,6 +210,9 @@ def main():
     XvalExp = (XvalExp-mu)/sigma
 
     errorPoli(Xnor, y, XvalExp, yval)
+    errorReg(Xnor, y, XvalExp, yval)
+    tercerConjunto(Xnor, y, Xtest, ytest, mu, sigma)
+
 
 #-----------------------------------------------------------------------
 main()
