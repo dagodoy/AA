@@ -6,7 +6,9 @@ import matplotlib.pyplot as plt
 from scipy.io import loadmat
 import scipy.optimize as opt
 from sklearn.svm import SVC
-
+import process_email
+from get_vocab_dict import getVocabDict
+import codecs
 
 
 #-----------------------------------------------------------------------
@@ -70,24 +72,49 @@ def eleccionParams(X, y, Xval, yval):
     svm.fit(X, y)
     return svm
     
-            
+#-----------------------------------------------------------------------
 
+def parte1():
+    X, y = loadData('ex6data1.mat')
+    svm = SVC(kernel= 'linear' , C=1.0)
+    svm.fit(X, y)
+    visualize_boundary(X, y,svm ,'data1_1.png')
 
-X, y = loadData('ex6data1.mat')
-svm = SVC(kernel= 'linear' , C=1.0)
-svm.fit(X, y)
-visualize_boundary(X, y,svm ,'data1_1.png')
+    X, y = loadData('ex6data2.mat')
+    C = 1
+    sigma = 0.1
+    svm = SVC(kernel= 'rbf' , C=C, gamma = 1/(2*sigma**2))
+    svm.fit(X, y)
+    visualize_boundary(X, y,svm ,'data1_2.png')
 
-X, y = loadData('ex6data2.mat')
-C = 1
-sigma = 0.1
-svm = SVC(kernel= 'rbf' , C=C, gamma = 1/(2*sigma**2))
-svm.fit(X, y)
-visualize_boundary(X, y,svm ,'data1_2.png')
+    X, y, Xval, yval = loadData3()
+    svm = eleccionParams(X, y, Xval, yval)
+    visualize_boundary(X, y, svm ,'data1_3.png')
 
-X, y, Xval, yval = loadData3()
-svm = eleccionParams(X, y, Xval, yval)
-visualize_boundary(X, y, svm ,'data1_3.png')
+#-----------------------------------------------------------------------
+
+def cargaEmails(directorio, nFiles):
+    vocab = getVocabDict()
+    emails = np.zeros((nFiles, len(vocab)))
+    for i in range(1, nFiles+1):
+        email_contents = codecs.open('{0}/{1:04d}.txt'.format(directorio, i), 'r', encoding='utf-8', errors='ignore').read()
+        words = process_email.email2TokenList(email_contents)
+        vec = np.zeros(len(vocab))
+        for w in words:
+            if w in vocab:
+                vec[vocab[w]-1] = 1
+        emails[i-1] = vec
+    return emails
+
+#-----------------------------------------------------------------------
+def parte2():
+    spam = cargaEmails("spam", 500)
+    easy_ham = cargaEmails("easy_ham", 2551)
+    hard_ham =cargaEmails("hard_ham", 250)
+    return spam, easy_ham, hard_ham
+
 
 
 #-----------------------------------------------------------------------
+
+parte2()
