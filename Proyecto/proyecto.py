@@ -2,6 +2,7 @@
 from pandas.io.parsers import read_csv
 
 from regresion_logistica import regresion_logistica_reg 
+from redes_neuronales import red_1
 
 
 
@@ -25,4 +26,5 @@ yval = data[size:, 0]
 
 lambd = 1
 
-print(regresion_logistica_reg(X, y, Xval, yval))
+#print(regresion_logistica_reg(X, y, Xval, yval))
+print(red_1(X,y,Xval,yval))
