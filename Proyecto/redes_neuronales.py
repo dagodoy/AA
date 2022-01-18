@@ -9,9 +9,6 @@ import scipy.optimize as opt
 #-----------------------------------------------------------------------
 
 def load(X, y, XVal,Yval):
-    # data = loadmat('ex4data1.mat')
-    # y=data['y'].ravel()
-    # X=data['X']
 
     m = len(y)
     input_size = X.shape[1]
@@ -119,34 +116,43 @@ def backprop ( params_rn , num_entradas , num_ocultas , num_etiquetas , X, y , r
 
 def red_neuronal(X, y ,XVal, YVal):
     X, y, yval = load(X, y ,XVal, YVal)
-    # theta1, theta2 = loadRed()
-    # params_rn = np.concatenate([np.ravel(theta1), np.ravel(theta2)])
+
     num_entradas = np.shape(X)[1]
     num_ocultas = 25
     num_etiquetas = 2
 
-    # tupla = backprop(params_rn, num_entradas, num_ocultas, num_etiquetas, X, y,1 )
-
-    #checkNNGradients.checkNNGradients(backprop, 1)
-
     ini = 0.12
-    reg=1
     i=100
 
-    pesos= np.random.uniform(-ini,ini,(num_entradas+1)*num_ocultas+(num_ocultas+1)*num_etiquetas)
-    sol = opt.minimize(fun=backprop, x0=pesos, args=(num_entradas,num_ocultas, num_etiquetas,X, y ,reg), jac= True,method = 'TNC', options ={'maxiter' :i})
 
-    theta1 = np.reshape ( sol.x [ : num_ocultas * ( num_entradas + 1 ) ] ,( num_ocultas , ( num_entradas + 1 )))
-    theta2 = np.reshape ( sol.x [ num_ocultas * ( num_entradas + 1 ) : ] ,( num_etiquetas , ( num_ocultas + 1 )))
-    
-    m = np.shape(X)[0]
+    plt.figure()
+    lambdArray = np.zeros(10)
 
-    A1, A2, H = propagacion(XVal, theta1, theta2)
+    max_correctos = 0
+    max_lambda = 0
 
-    maxChance = H.argmax(axis= 1)
-    res = yval.argmax(axis= 1)
-    correctos = np.sum(maxChance == res)
-    return correctos/m
+    for lambd in np.arange(0, 10, 1):
+        pesos= np.random.uniform(-ini,ini,(num_entradas+1)*num_ocultas+(num_ocultas+1)*num_etiquetas)
+        sol = opt.minimize(fun=backprop, x0=pesos, args=(num_entradas,num_ocultas, num_etiquetas,X, y ,lambd), jac= True,method = 'TNC', options ={'maxiter' :i})
+
+        theta1 = np.reshape ( sol.x [ : num_ocultas * ( num_entradas + 1 ) ] ,( num_ocultas , ( num_entradas + 1 )))
+        theta2 = np.reshape ( sol.x [ num_ocultas * ( num_entradas + 1 ) : ] ,( num_etiquetas , ( num_ocultas + 1 )))
+        
+        m = np.shape(X)[0]
+
+        A1, A2, H = propagacion(XVal, theta1, theta2)
+
+        maxChance = H.argmax(axis= 1)
+        res = yval.argmax(axis= 1)
+        correctos = np.sum(maxChance == res)
+        lambdArray[lambd] = correctos
+        if (correctos > max_correctos):
+            max_correctos = correctos
+            max_lambda = lambd
+    plt.plot(np.linspace(1,len(lambdArray),len(lambdArray), dtype=int),lambdArray)
+    plt.savefig("redes_neuronales.png")
+
+    return correctos/m, max_lambda
     
 
 #-----------------------------------------------------------------------

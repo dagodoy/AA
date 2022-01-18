@@ -37,9 +37,9 @@ yval = data[size:, 0]
 XvalNor, _, _ = normalizar_mat(Xval)
 XNor, _, _ = normalizar_mat(X)
 
-print(regresion_logistica_reg(XNor, y, XvalNor, yval))
+#print(regresion_logistica_reg(XNor, y, XvalNor, yval))
 print(red_neuronal(XNor,y,XvalNor,yval))
-print(svm_proyecto(XNor,y,XvalNor,yval))
+#print(svm_proyecto(XNor,y,XvalNor,yval))
 
 
 #grafica de los 3 juntos
