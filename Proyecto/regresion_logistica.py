@@ -57,7 +57,7 @@ def regresion_logistica_reg(X, Y, Xval, Yval):
 
     #hasta 14880000000000000000000000 el parametro de regularizacion no tiene ninguna influencia sobre la precision del modelo, y cuando la tiene es a peor
 
-    for lambd in np.arange(0, 3, 0.01):
+    for lambd in np.arange(0, 10, 0.1):
         theta = np.full(n+1, 0)
         result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X_ones,Y, lambd), messages= 0)
         theta_opt = result[0]

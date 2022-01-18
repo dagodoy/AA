@@ -28,12 +28,9 @@ def eleccionParams(X, y, Xval, yval):
     
 #-----------------------------------------------------------------------
 
-def parte1( X, y, Xval, yval):
+def svm_proyecto( X, y, Xval, yval):
     
     svm = eleccionParams(X, y, Xval, yval)
     return calculaScore(svm,Xval, yval)/np.shape(Xval)[0]
 
 #-----------------------------------------------------------------------
-
-
-

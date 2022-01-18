@@ -117,12 +117,12 @@ def backprop ( params_rn , num_entradas , num_ocultas , num_etiquetas , X, y , r
 
 #-----------------------------------------------------------------------
 
-def red_1(X, y ,XVal, YVal):
+def red_neuronal(X, y ,XVal, YVal):
     X, y, yval = load(X, y ,XVal, YVal)
     # theta1, theta2 = loadRed()
     # params_rn = np.concatenate([np.ravel(theta1), np.ravel(theta2)])
-    num_entradas = 95
-    num_ocultas = 1000
+    num_entradas = np.shape(X)[1]
+    num_ocultas = 25
     num_etiquetas = 2
 
     # tupla = backprop(params_rn, num_entradas, num_ocultas, num_etiquetas, X, y,1 )
@@ -146,7 +146,7 @@ def red_1(X, y ,XVal, YVal):
     maxChance = H.argmax(axis= 1)
     res = yval.argmax(axis= 1)
     correctos = np.sum(maxChance == res)
-    return correctos/m * 100
+    return correctos/m
     
 
 #-----------------------------------------------------------------------
