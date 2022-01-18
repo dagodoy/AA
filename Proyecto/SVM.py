@@ -7,6 +7,7 @@ def calculaScore(svm, Xval, yval):
     yp = svm.predict(Xval).reshape(yval.shape)
     return sum(yp == yval)
 
+#-----------------------------------------------------------------------
 
 def eleccionParams(X, y, Xval, yval):
     C_vec = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]

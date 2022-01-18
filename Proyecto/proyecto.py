@@ -27,6 +27,6 @@ yval = data[size:, 0]
 
 lambd = 1
 
-#print(regresion_logistica_reg(X, y, Xval, yval))
-#print(red_1(X,y,Xval,yval))
+print(regresion_logistica_reg(X, y, Xval, yval))
+print(red_1(X,y,Xval,yval))
 print(parte1(X,y,Xval,yval))

@@ -23,14 +23,12 @@ def gradient(theta, XX, Y):
 #-----------------------------------------------------------------------
 
 def coste_reg(theta, X, Y, lambd):
-    H = sigmoid(np.matmul(X, theta))
     coste = cost(theta, X, Y) + lambd/(2*len(X)) * np.sum(theta**2)
     return coste
 
 #-----------------------------------------------------------------------
 
 def gradiente_reg(theta, XX, Y, lambd):
-    H = sigmoid( np.matmul(XX,theta))
     grad =gradient(theta, XX, Y) + lambd/(len(XX)) * theta
     return grad
 
@@ -59,16 +57,20 @@ def regresion_logistica_reg(X, Y, Xval, Yval):
 
     #hasta 14880000000000000000000000 el parametro de regularizacion no tiene ninguna influencia sobre la precision del modelo, y cuando la tiene es a peor
 
-    for lambd in np.arange(0, 0.0001, 0.00001):
+    for lambd in np.arange(0, 3, 0.01):
         theta = np.full(n+1, 0)
         result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X_ones,Y, lambd), messages= 0)
         theta_opt = result[0]
-        correctos = evaluacion(theta_opt,Xval_ones,Yval)
+        correctos = evaluacion(theta_opt,X_ones,Y)
         if (correctos > max_correctos):
             max_correctos = correctos
             max_lambda = lambd
 
+    theta = np.full(n+1, 0)
+    result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X_ones,Y, max_lambda), messages= 0)
+    theta_opt = result[0]
+    correctosVal = evaluacion(theta_opt,Xval_ones,Yval)
 
-    return max_correctos/mval, max_lambda
+    return correctosVal/mval, max_lambda
 
 #-----------------------------------------------------------------------

@@ -22,7 +22,13 @@ def load(X, y, XVal,Yval):
     for i in range(m):
         y_onehot[i][y[i].__int__()] = 1
 
-    return X, y_onehot
+    n= len(Yval)
+    Yval = (Yval-1)
+    yval_onehot = np.zeros((n,num_labels))
+    for i in range(n):
+        yval_onehot[i][Yval[i].__int__()] = 1
+
+    return X, y_onehot, yval_onehot
 
 #-----------------------------------------------------------------------
 
@@ -112,7 +118,7 @@ def backprop ( params_rn , num_entradas , num_ocultas , num_etiquetas , X, y , r
 #-----------------------------------------------------------------------
 
 def red_1(X, y ,XVal, YVal):
-    X, y = load(X, y ,XVal, YVal)
+    X, y, yval = load(X, y ,XVal, YVal)
     # theta1, theta2 = loadRed()
     # params_rn = np.concatenate([np.ravel(theta1), np.ravel(theta2)])
     num_entradas = 95
@@ -135,10 +141,10 @@ def red_1(X, y ,XVal, YVal):
     
     m = np.shape(X)[0]
 
-    A1, A2, H = propagacion(X, theta1, theta2)
+    A1, A2, H = propagacion(XVal, theta1, theta2)
 
     maxChance = H.argmax(axis= 1)
-    res = y.argmax(axis= 1)
+    res = yval.argmax(axis= 1)
     correctos = np.sum(maxChance == res)
     return correctos/m * 100
     
