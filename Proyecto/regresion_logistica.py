@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.optimize as opt
+import matplotlib.pyplot as plt
 
 #-----------------------------------------------------------------------
 
@@ -42,8 +43,6 @@ def evaluacion(theta, X, Y):
 
 def regresion_logistica_reg(X, Y, Xval, Yval):
 
-    #como tenemos un monton de datos no hace falta hacer esto: X = mapfeature(X)
-
     m=np.shape(X)[0]
     n=np.shape(X)[1]
 
@@ -55,22 +54,22 @@ def regresion_logistica_reg(X, Y, Xval, Yval):
     max_correctos = 0
     max_lambda = 0
 
-    #hasta 14880000000000000000000000 el parametro de regularizacion no tiene ninguna influencia sobre la precision del modelo, y cuando la tiene es a peor
+    plt.figure()
+    correctArray = np.zeros(1000)
 
-    for lambd in np.arange(0, 10, 0.1):
+    for lambd in np.arange(0, 1000, 1):
         theta = np.full(n+1, 0)
         result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X_ones,Y, lambd), messages= 0)
         theta_opt = result[0]
-        correctos = evaluacion(theta_opt,X_ones,Y)
+        correctos = evaluacion(theta_opt,Xval_ones,Yval)
+        correctArray[lambd] = correctos
         if (correctos > max_correctos):
             max_correctos = correctos
             max_lambda = lambd
 
-    theta = np.full(n+1, 0)
-    result = opt.fmin_tnc( func=coste_reg , x0=theta , fprime=gradiente_reg , args =(X_ones,Y, max_lambda), messages= 0)
-    theta_opt = result[0]
-    correctosVal = evaluacion(theta_opt,Xval_ones,Yval)
+    plt.plot(np.linspace(1,len(correctArray),len(correctArray), dtype=int),correctArray)
+    plt.savefig("reg_logistica.png")
 
-    return correctosVal/mval, max_lambda
+    return max_correctos/mval, max_lambda
 
 #-----------------------------------------------------------------------

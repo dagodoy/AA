@@ -43,6 +43,5 @@ print(svm_proyecto(XNor,y,XvalNor,yval))
 
 
 #grafica de los 3 juntos
-#grafica regresion logistica segun lambda
 #grafica red neuronal segun lambda y numero capa oculta
 #grafica svm segun movidas
