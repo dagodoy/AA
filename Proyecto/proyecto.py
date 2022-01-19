@@ -40,7 +40,7 @@ XNor, _, _ = normalizar_mat(X)
 
 _reg , _ = (regresion_logistica_reg(XNor, y, XvalNor, yval))
 _red, _ = (red_neuronal(XNor,y,XvalNor,yval))
-_svm = (svm_proyecto(XNor,y,XvalNor,yval))
+_svm, _ = (svm_proyecto(XNor,y,XvalNor,yval))
 print(_reg)
 print(_red)
 print(_svm)
@@ -71,6 +71,3 @@ plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB'
 plt.xticks(index, xBars, fontsize=9)
 plt.ylim((0.925,1))
 plt.savefig('Comparacion3.png')
-#grafica de los 3 juntos
-#grafica red neuronal segun lambda y numero capa oculta
-#grafica svm segun movidas
