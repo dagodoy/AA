@@ -40,7 +40,7 @@ XNor, _, _ = normalizar_mat(X)
 
 _reg , _ = (regresion_logistica_reg(XNor, y, XvalNor, yval))
 _red, _ = (red_neuronal(XNor,y,XvalNor,yval))
-_svm, _ = (svm_proyecto(XNor,y,XvalNor,yval))
+_svm = (svm_proyecto(XNor,y,XvalNor,yval))
 print(_reg)
 print(_red)
 print(_svm)
