@@ -24,6 +24,9 @@ def eleccionParams(X, y, Xval, yval):
 
     axes = plt.axes(projection= '3d')
     axes.contour(C_vec, sigma_vec, scores, cmap='rainbow',linewidth=0, antialiased=False)
+    axes.set_xlabel('C')
+    axes.set_ylabel('sigma')
+    axes.set_zlabel('nº aciertos')
     plt.savefig("svm.png")
     index = np.unravel_index(np.argmax(scores), scores.shape)
 
