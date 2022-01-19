@@ -38,36 +38,36 @@ yval = data[size:, 0]
 XvalNor, _, _ = normalizar_mat(Xval)
 XNor, _, _ = normalizar_mat(X)
 
-# _reg , _ = (regresion_logistica_reg(XNor, y, XvalNor, yval))
-# _red, _ = (red_neuronal(XNor,y,XvalNor,yval))
+_reg , _ = (regresion_logistica_reg(XNor, y, XvalNor, yval))
+_red, _ = (red_neuronal(XNor,y,XvalNor,yval))
 _svm = (svm_proyecto(XNor,y,XvalNor,yval))
-# print(_reg)
-# print(_red)
+print(_reg)
+print(_red)
 print(_svm)
 
-# xBars = ['Reg. Logistica', 'Red Neuronal', 'SVM']
-# ancho = 0.7
-# fig, aux = plt.subplots(figsize=(8,7))
-# index = np.arange(len(xBars))
-# plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB')
-# plt.xticks(index, xBars, fontsize=9)
-# plt.ylim((0,1))
-# plt.savefig('Comparacion1.png')
+xBars = ['Reg. Logistica', 'Red Neuronal', 'SVM']
+ancho = 0.7
+fig, aux = plt.subplots(figsize=(8,7))
+index = np.arange(len(xBars))
+plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB')
+plt.xticks(index, xBars, fontsize=9)
+plt.ylim((0,1))
+plt.savefig('Comparacion1.png')
 
-# xBars = ['Reg. Logistica', 'Red Neuronal', 'SVM']
-# ancho = 0.7
-# fig, aux = plt.subplots(figsize=(8,7))
-# index = np.arange(len(xBars))
-# plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB')
-# plt.xticks(index, xBars, fontsize=9)
-# plt.ylim((0.8,1))
-# plt.savefig('Comparacion2.png')
+xBars = ['Reg. Logistica', 'Red Neuronal', 'SVM']
+ancho = 0.7
+fig, aux = plt.subplots(figsize=(8,7))
+index = np.arange(len(xBars))
+plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB')
+plt.xticks(index, xBars, fontsize=9)
+plt.ylim((0.8,1))
+plt.savefig('Comparacion2.png')
 
-# xBars = ['Reg. Logistica', 'Red Neuronal', 'SVM']
-# ancho = 0.7
-# fig, aux = plt.subplots(figsize=(8,7))
-# index = np.arange(len(xBars))
-# plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB')
-# plt.xticks(index, xBars, fontsize=9)
-# plt.ylim((0.925,1))
+xBars = ['Reg. Logistica', 'Red Neuronal', 'SVM']
+ancho = 0.7
+fig, aux = plt.subplots(figsize=(8,7))
+index = np.arange(len(xBars))
+plt.bar(index, [float(_reg), float(_red), float(_svm)], ancho, color = '#7986CB')
+plt.xticks(index, xBars, fontsize=9)
+plt.ylim((0.925,1))
 plt.savefig('Comparacion3.png')
