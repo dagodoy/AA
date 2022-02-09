@@ -58,19 +58,20 @@ def calculaScore(svm, Xval, yval):
 def eleccionParams(X, y, Xval, yval):
     C_vec = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]
     sigma_vec = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30]
-    scores = np.zeros((len(C_vec), len(sigma_vec)))
+    maxScore = 0
     
     for i in range(len(C_vec)):
         for j in range(len(sigma_vec)):
             svm = SVC(kernel= 'rbf' , C=C_vec[i], gamma = 1/(2*sigma_vec[j]**2))
             svm.fit(X, y)
-            scores[i][j] = calculaScore(svm, Xval, yval)
+            score = calculaScore(svm, Xval, yval)
+            if (score > maxScore):
+                maxSvm = svm
+                maxC = C_vec[i]
+                maxSigma = sigma_vec[j]
+                maxScore = score
 
-    index = np.unravel_index(np.argmax(scores), scores.shape)
-
-    svm = SVC(kernel= 'rbf' , C=C_vec[index[0]], gamma = 1/(2*sigma_vec[index[1]]**2))
-    svm.fit(X, y)
-    return svm
+    return maxSvm, maxScore, maxC, maxSigma
     
 #-----------------------------------------------------------------------
 
@@ -88,7 +89,7 @@ def parte1():
     visualize_boundary(X, y,svm ,'data1_2.png')
 
     X, y, Xval, yval = loadData3()
-    svm = eleccionParams(X, y, Xval, yval)
+    svm, _, _, _ = eleccionParams(X, y, Xval, yval)
     visualize_boundary(X, y, svm ,'data1_3.png')
 
 #-----------------------------------------------------------------------
@@ -107,10 +108,60 @@ def cargaEmails(directorio, nFiles):
     return emails
 
 #-----------------------------------------------------------------------
+
+def getMatColPercent(mat, ini, fin):
+    return mat[(ini*mat.shape[0]).__int__():(fin*mat.shape[0]).__int__(), :]
+
+#-----------------------------------------------------------------------
+
+def getMatPercent(mat, ini, fin):
+    return mat[(ini*mat.shape[0]).__int__():(fin*mat.shape[0]).__int__()]
+
+#-----------------------------------------------------------------------
+
 def parte2():
     spam = cargaEmails("spam", 500)
+    y_spam = np.ones(spam.shape[0])
     easy_ham = cargaEmails("easy_ham", 2551)
-    hard_ham =cargaEmails("hard_ham", 250)
+    y_easy = np.zeros(easy_ham.shape[0])
+    hard_ham = cargaEmails("hard_ham", 250)
+    y_hard = np.zeros(hard_ham.shape[0])
+
+    X = np.vstack((
+                   getMatColPercent(spam, 0, 0.6),
+                   getMatColPercent(easy_ham, 0, 0.6),
+                   getMatColPercent(hard_ham, 0, 0.6)
+                 ))
+    y = np.hstack((
+                   getMatPercent(y_spam, 0, 0.6),
+                   getMatPercent(y_easy, 0, 0.6),
+                   getMatPercent(y_hard, 0, 0.6)
+                ))
+
+    Xval = np.vstack((
+                   getMatColPercent(spam, 0.6, 0.8),
+                   getMatColPercent(easy_ham, 0.6, 0.8),
+                   getMatColPercent(hard_ham, 0.6, 0.8)
+                 ))
+    yval = np.hstack((
+                   getMatPercent(y_spam, 0.6, 0.8),
+                   getMatPercent(y_easy, 0.6, 0.8),
+                   getMatPercent(y_hard, 0.6, 0.8)
+                ))    
+    Xtest = np.vstack((
+                   getMatColPercent(spam, 0.8, 1),
+                   getMatColPercent(easy_ham, 0.8, 1),
+                   getMatColPercent(hard_ham, 0.8, 1)
+                 ))
+    ytest = np.hstack((
+                   getMatPercent(y_spam, 0.8, 1),
+                   getMatPercent(y_easy, 0.8, 1),
+                   getMatPercent(y_hard, 0.8, 1)
+                ))
+
+    svm, score, _, _ = eleccionParams(X, y, Xval, yval)
+    scoreTest = calculaScore(svm, Xtest, ytest)
+    #visualize_boundary(X, y, svm, 'intento.png')
     return spam, easy_ham, hard_ham
 
 
