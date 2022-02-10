@@ -127,45 +127,50 @@ def parte2():
     hard_ham = cargaEmails("hard_ham", 250)
     y_hard = np.zeros(hard_ham.shape[0])
 
+    print("mails cargados")
+
+    percentage = 0.5
+    valPercentage = percentage + 0.25
+
     X = np.vstack((
-                   getMatColPercent(spam, 0, 0.6),
-                   getMatColPercent(easy_ham, 0, 0.6),
-                   getMatColPercent(hard_ham, 0, 0.6)
+                   getMatColPercent(spam, 0, percentage),
+                   getMatColPercent(easy_ham, 0, percentage),
+                   getMatColPercent(hard_ham, 0, percentage)
                  ))
     y = np.hstack((
-                   getMatPercent(y_spam, 0, 0.6),
-                   getMatPercent(y_easy, 0, 0.6),
-                   getMatPercent(y_hard, 0, 0.6)
+                   getMatPercent(y_spam, 0, percentage),
+                   getMatPercent(y_easy, 0, percentage),
+                   getMatPercent(y_hard, 0, percentage)
                 ))
 
     Xval = np.vstack((
-                   getMatColPercent(spam, 0.6, 0.8),
-                   getMatColPercent(easy_ham, 0.6, 0.8),
-                   getMatColPercent(hard_ham, 0.6, 0.8)
+                   getMatColPercent(spam, percentage, valPercentage),
+                   getMatColPercent(easy_ham, percentage, valPercentage),
+                   getMatColPercent(hard_ham, percentage, valPercentage)
                  ))
     yval = np.hstack((
-                   getMatPercent(y_spam, 0.6, 0.8),
-                   getMatPercent(y_easy, 0.6, 0.8),
-                   getMatPercent(y_hard, 0.6, 0.8)
+                   getMatPercent(y_spam, percentage, valPercentage),
+                   getMatPercent(y_easy, percentage, valPercentage),
+                   getMatPercent(y_hard, percentage, valPercentage)
                 ))    
     Xtest = np.vstack((
-                   getMatColPercent(spam, 0.8, 1),
-                   getMatColPercent(easy_ham, 0.8, 1),
-                   getMatColPercent(hard_ham, 0.8, 1)
+                   getMatColPercent(spam, valPercentage, 1),
+                   getMatColPercent(easy_ham, valPercentage, 1),
+                   getMatColPercent(hard_ham, valPercentage, 1)
                  ))
     ytest = np.hstack((
-                   getMatPercent(y_spam, 0.8, 1),
-                   getMatPercent(y_easy, 0.8, 1),
-                   getMatPercent(y_hard, 0.8, 1)
+                   getMatPercent(y_spam, valPercentage, 1),
+                   getMatPercent(y_easy, valPercentage, 1),
+                   getMatPercent(y_hard, valPercentage, 1)
                 ))
 
-    svm, score, _, _ = eleccionParams(X, y, Xval, yval)
+    svm, _, _, _ = eleccionParams(X, y, Xval, yval)
+    print("params elegidos")
     scoreTest = calculaScore(svm, Xtest, ytest)
-    #visualize_boundary(X, y, svm, 'intento.png')
-    return spam, easy_ham, hard_ham
+    return scoreTest/Xtest.shape[0]
 
 
 
 #-----------------------------------------------------------------------
 
-parte2()
+print(parte2())
