@@ -164,10 +164,10 @@ def parte2():
                    getMatPercent(y_hard, valPercentage, 1)
                 ))
 
-    svm, _, _, _ = eleccionParams(X, y, Xval, yval)
+    svm, score, c, sigma = eleccionParams(X, y, Xval, yval)
     print("params elegidos")
     scoreTest = calculaScore(svm, Xtest, ytest)
-    return scoreTest/Xtest.shape[0]
+    return scoreTest/Xtest.shape[0], c, sigma
 
 
 
